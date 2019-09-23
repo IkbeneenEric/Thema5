@@ -45,15 +45,20 @@ def read_data(filename):
     for line in pileup_file:
         line_list.append(line)
 
-    pass
+    return line_list
 
 def save_coverage_statistics(coverage_file, coverage_statistics):
     """ Writes coverage data to a tabular file using Python's
         csv library: https://docs.python.org/3/library/csv.html#csv.writer
     """
 
-    # Write the coverage_statistics to a CSV file
-    pass
+    with open(coverage_file, mode='w', newline="") as csv_file:
+        csv_out = csv.writer(csv_file)
+
+        # writing tuples containing information to the csv file
+        for x in coverage_statistics:
+            csv_out.writerow(x)
+
 
 def calculate_mapping_coverage(coverage_dict):
     """ Function to calculate all coverage statistics on a per-gene basis
@@ -64,26 +69,16 @@ def calculate_mapping_coverage(coverage_dict):
     ## Create an empty list that will hold all data to save
     statistics = []
 
-    ## Iterate over all the genes in the coverage_dict getting the gene name
-    ## and list with coverage data for that gene
-
-
+    # Adding the necessary information to a list in tuples
     for gene in coverage_dict:
-        gene_name = gene
+        # Amount of low coverage bases
+        low_coverage = len([coverage_dict[gene] for i in coverage_dict[gene] if i < 30])
+        # Coverage length per gene
         coverage = coverage_dict[gene]
-        statistics.append((gene_name, len(coverage),
-                           round(sum(coverage) / len(coverage))))
+        # Adding the gene name, coverage length, average coverage and amount of low coverage scores
+        statistics.append((gene, len(coverage),
+                           round(sum(coverage) / len(coverage), 1), low_coverage))
 
-
-    print("This:", statistics)
-    ## Put the following elements in a single tuple and append to the
-    ## statistics list.
-    ##      * Gene name,
-    ##      * Total positions (gene length covered)
-    ##      * Average Coverage (use round with one position)
-    ##      * Number of low-coverage positions (coverage value < 30)
-
-    ## Return the list of tuples holding the data
     return statistics
 
 ######
